@@ -1,3 +1,4 @@
+import type { IconName } from '../components/icons';
 import { DAY, HOUR, MINUTE } from './time';
 
 export type Milestone = {
@@ -5,7 +6,7 @@ export type Milestone = {
   at: number;
   label: string;
   description: string;
-  icon: string;
+  icon: IconName;
 };
 
 /**
@@ -18,79 +19,79 @@ export const MILESTONES: Milestone[] = [
     at: 20 * MINUTE,
     label: '20分',
     description: '上がっていた心拍数と血圧が落ち着き始めます。',
-    icon: '💓',
+    icon: 'pulse',
   },
   {
     at: 8 * HOUR,
     label: '8時間',
     description: '血液中の一酸化炭素が減り、酸素が全身に届きやすくなります。',
-    icon: '🫁',
+    icon: 'wind',
   },
   {
     at: DAY,
     label: '24時間',
     description: '心臓発作のリスクが下がり始めます。',
-    icon: '❤️‍🩹',
+    icon: 'heart',
   },
   {
     at: 2 * DAY,
     label: '48時間',
     description: '傷んでいた味覚と嗅覚が戻り始め、食事がおいしく感じられます。',
-    icon: '👃',
+    icon: 'droplet',
   },
   {
     at: 3 * DAY,
     label: '72時間',
     description: '体内のニコチンがほぼ抜け、気管支がゆるんで呼吸が楽になります。',
-    icon: '🌬️',
+    icon: 'lungs',
   },
   {
     at: 14 * DAY,
     label: '2週間',
     description: '血行が良くなり、歩行や運動が以前より楽になります。',
-    icon: '🚶',
+    icon: 'walk',
   },
   {
     at: 30 * DAY,
     label: '1ヶ月',
     description: '肺の機能が改善し、咳や息切れが減ってきます。',
-    icon: '💪',
+    icon: 'flex',
   },
   {
     at: 90 * DAY,
     label: '3ヶ月',
     description: '肺の繊毛が回復し、感染症にかかりにくくなります。',
-    icon: '🛡️',
+    icon: 'shield',
   },
   {
     at: 270 * DAY,
     label: '9ヶ月',
     description: '咳・息切れ・だるさがさらに軽くなります。',
-    icon: '🎈',
+    icon: 'feather',
   },
   {
     at: 365 * DAY,
     label: '1年',
     description: '冠動脈疾患のリスクが喫煙を続けた場合の約半分になります。',
-    icon: '🏅',
+    icon: 'award',
   },
   {
     at: 5 * 365 * DAY,
     label: '5年',
     description: '脳卒中のリスクが非喫煙者に近づきます。',
-    icon: '🧠',
+    icon: 'brain',
   },
   {
     at: 10 * 365 * DAY,
     label: '10年',
     description: '肺がんで亡くなるリスクが吸い続けた場合の約半分になります。',
-    icon: '🌱',
+    icon: 'leaf',
   },
   {
     at: 15 * 365 * DAY,
     label: '15年',
     description: '冠動脈疾患のリスクが非喫煙者と同程度になります。',
-    icon: '🎉',
+    icon: 'star',
   },
 ];
 

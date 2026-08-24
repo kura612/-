@@ -1,10 +1,14 @@
 import type { Profile } from '../types';
 import { elapsedSince, humanizeDuration } from '../lib/time';
 import { achievedCount, MILESTONES, nextMilestone } from '../lib/milestones';
+import Icon from './icons';
+import Ring from './Ring';
 
 type Props = { profile: Profile; now: number };
 
-/** 画面上部の「禁煙してからの経過時間」と次のマイルストーンまでの進捗 */
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** 経過時間と、次の回復マイルストーンまでの進捗 */
 export default function ElapsedHero({ profile, now }: Props) {
   const e = elapsedSince(profile.quitAt, now);
   const next = nextMilestone(e.totalMs);
@@ -12,54 +16,51 @@ export default function ElapsedHero({ profile, now }: Props) {
 
   return (
     <section className="card hero">
-      <p className="hero-label">禁煙してから</p>
-      <div className="clock" aria-live="polite">
-        <Unit value={e.days} unit="日" wide />
-        <Unit value={e.hours} unit="時間" />
-        <Unit value={e.minutes} unit="分" />
-        <Unit value={e.seconds} unit="秒" />
+      <div className="hero-main">
+        <div className="hero-count">
+          <p className="eyebrow">禁煙してから</p>
+          <p className="days" aria-live="polite">
+            <span className="days-num">{e.days}</span>
+            <span className="days-unit">日</span>
+          </p>
+          <p className="hero-clock">
+            {pad(e.hours)}:{pad(e.minutes)}:{pad(e.seconds)}
+          </p>
+        </div>
+
+        <Ring
+          ratio={next ? next.ratio : 1}
+          label={next ? `次のマイルストーンまで ${Math.round(next.ratio * 100)}%` : '全達成'}
+        >
+          <Icon name={next ? next.milestone.icon : 'star'} size={20} />
+          <span className="ring-pct">{next ? `${Math.round(next.ratio * 100)}%` : '100%'}</span>
+        </Ring>
       </div>
 
-      {next ? (
-        <div className="next-milestone">
-          <div className="next-head">
-            <span className="next-icon" aria-hidden="true">
-              {next.milestone.icon}
-            </span>
-            <div>
-              <p className="next-title">
-                次は <strong>{next.milestone.label}</strong>
-              </p>
-              <p className="muted small">{next.milestone.description}</p>
+      <div className="hero-foot">
+        {next ? (
+          <>
+            <div className="hero-next">
+              <p className="eyebrow">次の回復</p>
+              <p className="hero-next-label">{next.milestone.label}</p>
+              <p className="hero-next-desc">{next.milestone.description}</p>
             </div>
-            <span className="next-remaining">あと {humanizeDuration(next.remainingMs)}</span>
-          </div>
-          <div
-            className="bar"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(next.ratio * 100)}
-          >
-            <div className="bar-fill" style={{ width: `${next.ratio * 100}%` }} />
-          </div>
-        </div>
-      ) : (
-        <p className="next-title">🎉 すべての回復マイルストーンを達成しました。</p>
-      )}
+            <div className="hero-remaining">
+              <p className="eyebrow">残り</p>
+              <p className="hero-remaining-value">{humanizeDuration(next.remainingMs)}</p>
+            </div>
+          </>
+        ) : (
+          <p className="hero-next-label">すべての回復マイルストーンを達成しました</p>
+        )}
+      </div>
 
-      <p className="muted small center">
-        回復マイルストーン {done} / {MILESTONES.length} 達成
+      <p className="hero-progress-note">
+        <span>回復マイルストーン</span>
+        <span className="num">
+          {done} <span className="dim">/ {MILESTONES.length}</span>
+        </span>
       </p>
     </section>
-  );
-}
-
-function Unit({ value, unit, wide = false }: { value: number; unit: string; wide?: boolean }) {
-  return (
-    <div className={`unit${wide ? ' wide' : ''}`}>
-      <span className="unit-value">{wide ? value : String(value).padStart(2, '0')}</span>
-      <span className="unit-label">{unit}</span>
-    </div>
   );
 }

@@ -14,19 +14,24 @@ const CONFIG = {
   cigarettesPerDay: 15, // 禁煙前に1日あたり吸っていた本数
   cigarettesPerPack: 20, // 1箱あたりの本数
   pricePerPack: 600, // 1箱あたりの価格（円）
+
+  // ウィジェットをタップした時に開くURL（公開したアプリのURL）。
+  // ウィジェットは秒を刻めないので、秒まで見たい時はここからアプリを開く。
+  appUrl: 'https://kura612.github.io/-/',
 };
 
 // ウィジェットのパラメータに「2026-08-01T09:00,20,20,600」と入れると、
-// このファイルを書き換えなくても上の設定を上書きできる。
+// このファイルを書き換えなくても上の設定を上書きできる（末尾にURLも追加可）。
 function resolveConfig() {
   const raw = args.widgetParameter;
   if (!raw) return CONFIG;
-  const [quitAt, perDay, perPack, price] = raw.split(',').map((s) => s.trim());
+  const [quitAt, perDay, perPack, price, url] = raw.split(',').map((s) => s.trim());
   return {
     quitAt: quitAt || CONFIG.quitAt,
     cigarettesPerDay: Number(perDay) || CONFIG.cigarettesPerDay,
     cigarettesPerPack: Number(perPack) || CONFIG.cigarettesPerPack,
     pricePerPack: Number(price) || CONFIG.pricePerPack,
+    appUrl: url || CONFIG.appUrl,
   };
 }
 
@@ -268,6 +273,12 @@ function buildMedium(widget, data) {
     addLabel(caption, `あと ${humanize(data.next.remainingMs)}`, Font.systemFont(9), COLOR.ink3);
   }
   addLabel(caption, `${data.achieved} / ${MILESTONES.length} 達成`, Font.systemFont(9), COLOR.ink3);
+
+  // ウィジェットは毎秒は更新できないので、いつ時点の表示なのかを小さく添える
+  widget.addSpacer(4);
+  const stamp = widget.addStack();
+  stamp.addSpacer();
+  addLabel(stamp, `${data.updatedAt} 時点`, Font.systemFont(8), COLOR.ink3);
 }
 
 function buildError(widget, message) {
@@ -305,10 +316,14 @@ function createWidget() {
     savings: calcSavings(cfg, elapsed),
     next: nextMilestone(elapsed),
     achieved: achievedCount(elapsed),
+    updatedAt: new Date(now).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
   };
 
   if (config.widgetFamily === 'small') buildSmall(widget, data);
   else buildMedium(widget, data);
+
+  // タップでアプリを開く。ウィジェット側で When Interacting を設定しなくてよい。
+  if (cfg.appUrl) widget.url = cfg.appUrl;
 
   widget.refreshAfterDate = nextRefreshDate(cfg.quitAt, now);
   return widget;

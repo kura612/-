@@ -25,7 +25,32 @@ npm run preview  # ビルド結果をプレビュー
 npm run test     # ロジックのユニットテスト (Vitest)
 ```
 
+`npm run build` は型チェック → Vite ビルド → `scripts/build-sw.mjs` の順で走ります。最後のスクリプトが、生成されたアセットの一覧とビルドごとのハッシュを `dist/sw.js` に埋め込み、オフライン用のキャッシュを作ります。
+
 初回起動時に「禁煙を始めた日時 / 1日の本数 / 1箱の本数と価格」を入力すると、以降はその値をもとに集計されます。設定画面から変更・JSON書き出し・全データ削除ができます。
+
+## iPhone で使う
+
+ホーム画面に追加すると、アドレスバーのないアプリとして起動し、オフラインでも開けます（PWA）。
+
+### 1. 公開する
+
+`main` に入ると GitHub Actions が自動でビルドして GitHub Pages に公開します（`.github/workflows/deploy.yml`）。
+初回だけ、リポジトリの **Settings → Pages → Build and deployment → Source** を **GitHub Actions** に切り替えてください。
+
+公開先: `https://<ユーザー名>.github.io/<リポジトリ名>/`
+
+Pages を使わない場合も、`npm run build` で出る `dist/` をそのまま任意の静的ホスティング（Netlify / Vercel / Cloudflare Pages など）へ置くだけで動きます。`vite.config.ts` で `base: './'` にしてあるので、サブディレクトリ配信でもパスは壊れません。
+
+### 2. ホーム画面に追加する
+
+1. iPhone の **Safari** で公開URLを開く（Chrome など他のブラウザではホーム画面に追加できません）
+2. 下部の共有ボタン → **「ホーム画面に追加」**
+3. 追加されたアイコンから起動
+
+これで全画面表示になり、電波がなくても起動します。データは今まで通り端末内にだけ保存されます。
+
+> **バックアップについて**: データは Safari のストレージにあるため、Safari の履歴・サイトデータを消すと一緒に消えます。長く続けるなら、設定画面の「書き出す」で時々 JSON を保存しておくと安心です。
 
 ## 構成
 
@@ -42,7 +67,15 @@ src/
 │   ├── milestones.ts    健康回復マイルストーン
 │   ├── cravings.ts      クレービングの集計ときっかけ定義
 │   └── storage.ts       localStorage の読み書き
-└── components/          UI コンポーネント
+├── components/          UI コンポーネント
+│   ├── icons.tsx        自作のラインアイコン
+│   └── Ring.tsx         進捗リング
+└── styles.css           デザイントークンと全画面のスタイル
+
+public/
+├── manifest.webmanifest PWA の定義
+├── sw.js                オフライン用 Service Worker
+└── icon-*.png           アプリアイコン（元データは assets/icon.svg）
 ```
 
 計算ロジックは `src/lib` に集約し、`src/lib/lib.test.ts` で検証しています。

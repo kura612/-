@@ -1,71 +1,74 @@
 import type { Craving, Profile } from '../types';
-import { calcSavings, formatNumber, formatYen, savingsPerDays } from '../lib/stats';
+import { calcSavings, formatNumber, savingsPerDays } from '../lib/stats';
 import { elapsedSince, humanizeDuration } from '../lib/time';
 import { resistRate } from '../lib/cravings';
+import Icon, { type IconName } from './icons';
 
 type Props = { profile: Profile; cravings: Craving[]; now: number };
 
-/** 節約金額・吸わなかった本数・取り戻した時間・欲求に打ち勝った率 */
+/** 節約金額・本数・取り戻した時間・乗り切れた率を並べた計器パネル */
 export default function StatGrid({ profile, cravings, now }: Props) {
   const { totalMs } = elapsedSince(profile.quitAt, now);
   const s = calcSavings(profile, totalMs);
   const rate = resistRate(cravings);
 
   return (
-    <section className="stat-grid">
-      <Stat
-        icon="💰"
+    <section className="card panel">
+      <Cell
+        icon="coin"
         label="節約できた金額"
-        value={formatYen(s.moneySaved)}
-        sub={`1ヶ月で ${formatYen(savingsPerDays(profile, 30))} のペース`}
-        accent="money"
+        value={formatNumber(s.moneySaved)}
+        unit="円"
+        sub={`1ヶ月あたり ${formatNumber(savingsPerDays(profile, 30))} 円`}
       />
-      <Stat
-        icon="🚭"
-        label="吸わずに済んだ本数"
-        value={`${formatNumber(s.cigarettesAvoided)} 本`}
+      <Cell
+        icon="nosmoke"
+        label="吸わずに済んだ"
+        value={formatNumber(s.cigarettesAvoided)}
+        unit="本"
         sub={`約 ${formatNumber(s.cigarettesAvoided / profile.cigarettesPerPack)} 箱ぶん`}
-        accent="cigs"
       />
-      <Stat
-        icon="⏳"
+      <Cell
+        icon="hourglass"
         label="取り戻した時間"
         value={humanizeDuration(s.timeRegainedMs)}
         sub="1本5分として計算"
-        accent="time"
       />
-      <Stat
-        icon="🛡️"
-        label="欲求に打ち勝った率"
-        value={rate === null ? '—' : `${Math.round(rate * 100)}%`}
+      <Cell
+        icon="target"
+        label="乗り切れた率"
+        value={rate === null ? '—' : String(Math.round(rate * 100))}
+        unit={rate === null ? undefined : '%'}
         sub={rate === null ? 'まだ記録がありません' : `${cravings.length} 件の記録から`}
-        accent="win"
       />
     </section>
   );
 }
 
-function Stat({
+function Cell({
   icon,
   label,
   value,
+  unit,
   sub,
-  accent,
 }: {
-  icon: string;
+  icon: IconName;
   label: string;
   value: string;
+  unit?: string;
   sub: string;
-  accent: string;
 }) {
   return (
-    <div className={`card stat stat-${accent}`}>
-      <span className="stat-icon" aria-hidden="true">
-        {icon}
-      </span>
-      <p className="stat-label">{label}</p>
-      <p className="stat-value">{value}</p>
-      <p className="muted small">{sub}</p>
+    <div className="cell">
+      <p className="cell-head">
+        <Icon name={icon} size={15} />
+        <span className="eyebrow">{label}</span>
+      </p>
+      <p className="cell-value">
+        {value}
+        {unit && <span className="cell-unit">{unit}</span>}
+      </p>
+      <p className="cell-sub">{sub}</p>
     </div>
   );
 }

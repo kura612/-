@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Profile } from '../types';
 import { toLocalInputValue } from '../lib/time';
-import { formatYen, savingsPerDays } from '../lib/stats';
+import { formatNumber, savingsPerDays } from '../lib/stats';
 
 type Props = {
   initial?: Profile | null;
@@ -11,7 +11,12 @@ type Props = {
 };
 
 /** 初回セットアップ兼、設定の編集フォーム */
-export default function Onboarding({ initial, submitLabel = '禁煙をはじめる', onSubmit, onCancel }: Props) {
+export default function Onboarding({
+  initial,
+  submitLabel = 'はじめる',
+  onSubmit,
+  onCancel,
+}: Props) {
   const [quitAt, setQuitAt] = useState(() =>
     toLocalInputValue(initial ? new Date(initial.quitAt) : new Date()),
   );
@@ -31,19 +36,16 @@ export default function Onboarding({ initial, submitLabel = '禁煙をはじめ�
 
   return (
     <form
-      className="card onboarding"
+      className="card form"
       onSubmit={(e) => {
         e.preventDefault();
         if (valid) onSubmit(draft);
       }}
     >
-      <h2>{initial ? '設定を変更' : 'はじめる前に'}</h2>
-      <p className="muted">
-        入力した内容はこの端末のブラウザにだけ保存されます。サーバーには何も送信されません。
-      </p>
+      <h2 className="section-title">{initial ? '設定' : 'はじめる前に'}</h2>
 
-      <label>
-        <span>禁煙を始めた（始める）日時</span>
+      <label className="field">
+        <span className="eyebrow">禁煙を始めた日時</span>
         <input
           type="datetime-local"
           value={quitAt}
@@ -54,9 +56,9 @@ export default function Onboarding({ initial, submitLabel = '禁煙をはじめ�
       </label>
       {future && <p className="error">未来の日時は設定できません。</p>}
 
-      <div className="grid-2">
-        <label>
-          <span>1日の本数</span>
+      <div className="field-row">
+        <label className="field">
+          <span className="eyebrow">1日の本数</span>
           <input
             type="number"
             inputMode="numeric"
@@ -67,8 +69,8 @@ export default function Onboarding({ initial, submitLabel = '禁煙をはじめ�
             required
           />
         </label>
-        <label>
-          <span>1箱の本数</span>
+        <label className="field">
+          <span className="eyebrow">1箱の本数</span>
           <input
             type="number"
             inputMode="numeric"
@@ -81,8 +83,8 @@ export default function Onboarding({ initial, submitLabel = '禁煙をはじめ�
         </label>
       </div>
 
-      <label>
-        <span>1箱の価格（円）</span>
+      <label className="field">
+        <span className="eyebrow">1箱の価格（円）</span>
         <input
           type="number"
           inputMode="numeric"
@@ -95,22 +97,38 @@ export default function Onboarding({ initial, submitLabel = '禁煙をはじめ�
       </label>
 
       {valid && (
-        <p className="preview">
-          この習慣なら <strong>{formatYen(savingsPerDays(draft, 30))}</strong> / 月、
-          <strong>{formatYen(savingsPerDays(draft, 365))}</strong> / 年を吸わずに残せます。
-        </p>
+        <dl className="preview">
+          <div>
+            <dt className="eyebrow">1ヶ月で</dt>
+            <dd>
+              {formatNumber(savingsPerDays(draft, 30))}
+              <span className="cell-unit">円</span>
+            </dd>
+          </div>
+          <div>
+            <dt className="eyebrow">1年で</dt>
+            <dd>
+              {formatNumber(savingsPerDays(draft, 365))}
+              <span className="cell-unit">円</span>
+            </dd>
+          </div>
+        </dl>
       )}
 
       <div className="actions">
         {onCancel && (
-          <button type="button" className="btn ghost" onClick={onCancel}>
+          <button type="button" className="btn quiet" onClick={onCancel}>
             キャンセル
           </button>
         )}
-        <button type="submit" className="btn primary" disabled={!valid}>
+        <button type="submit" className="btn solid" disabled={!valid}>
           {submitLabel}
         </button>
       </div>
+
+      <p className="footnote">
+        入力した内容はこの端末のブラウザにだけ保存されます。外部には送信されません。
+      </p>
     </form>
   );
 }

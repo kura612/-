@@ -1,24 +1,25 @@
+import type { IconName } from '../components/icons';
 import type { Craving, TriggerId } from '../types';
 import { DAY, isSameDay } from './time';
 
-export const TRIGGERS: { id: TriggerId; label: string; icon: string }[] = [
-  { id: 'after-meal', label: '食後', icon: '🍚' },
-  { id: 'coffee', label: 'コーヒー・お茶', icon: '☕' },
-  { id: 'alcohol', label: 'お酒', icon: '🍺' },
-  { id: 'stress', label: 'ストレス', icon: '😤' },
-  { id: 'boredom', label: '退屈', icon: '🥱' },
-  { id: 'social', label: '人付き合い', icon: '👥' },
-  { id: 'wake-up', label: '起きてすぐ', icon: '🌅' },
-  { id: 'break', label: '休憩中', icon: '🛋️' },
-  { id: 'other', label: 'その他', icon: '✨' },
+export const TRIGGERS: { id: TriggerId; label: string; icon: IconName }[] = [
+  { id: 'after-meal', label: '食後', icon: 'utensils' },
+  { id: 'coffee', label: 'コーヒー・お茶', icon: 'coffee' },
+  { id: 'alcohol', label: 'お酒', icon: 'glass' },
+  { id: 'stress', label: 'ストレス', icon: 'flame' },
+  { id: 'boredom', label: '退屈', icon: 'cloud' },
+  { id: 'social', label: '人付き合い', icon: 'users' },
+  { id: 'wake-up', label: '起きてすぐ', icon: 'sunrise' },
+  { id: 'break', label: '休憩中', icon: 'sofa' },
+  { id: 'other', label: 'その他', icon: 'sparkle' },
 ];
 
 export function triggerLabel(id: TriggerId): string {
   return TRIGGERS.find((t) => t.id === id)?.label ?? 'その他';
 }
 
-export function triggerIcon(id: TriggerId): string {
-  return TRIGGERS.find((t) => t.id === id)?.icon ?? '✨';
+export function triggerIcon(id: TriggerId): IconName {
+  return TRIGGERS.find((t) => t.id === id)?.icon ?? 'sparkle';
 }
 
 /** 欲求に打ち勝てた割合 (0〜1)。記録が無ければ null。 */

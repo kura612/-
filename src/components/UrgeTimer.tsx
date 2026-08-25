@@ -5,7 +5,7 @@ const CYCLE = 8; // 4秒吸って4秒吐く
 
 type Props = { onDone: () => void };
 
-/** 欲求をやり過ごす3分タイマー。呼吸のリズムを合わせて表示する。 */
+/** 欲求をやり過ごす3分タイマー。呼吸のリズムに合わせてリングが広がる。 */
 export default function UrgeTimer({ onDone }: Props) {
   const [left, setLeft] = useState(TOTAL);
 
@@ -24,22 +24,21 @@ export default function UrgeTimer({ onDone }: Props) {
 
   const elapsed = TOTAL - left;
   const inhale = elapsed % CYCLE < CYCLE / 2;
-  const ratio = elapsed / TOTAL;
   const finished = left === 0;
 
   return (
-    <div className="urge-timer">
-      <div className={`breath ${inhale ? 'in' : 'out'}`} aria-hidden="true" />
-      <p className="breath-text" aria-live="polite">
-        {finished ? '乗り切りました' : inhale ? 'ゆっくり吸って…' : 'ゆっくり吐いて…'}
-      </p>
-      <p className="countdown">
-        {String(Math.floor(left / 60)).padStart(2, '0')}:{String(left % 60).padStart(2, '0')}
-      </p>
-      <div className="bar">
-        <div className="bar-fill" style={{ width: `${ratio * 100}%` }} />
+    <div className="urge">
+      <div className="breath-stage">
+        <span className={`breath-ring ${inhale ? 'in' : 'out'}`} aria-hidden="true" />
+        <span className="breath-dot" aria-hidden="true" />
+        <p className="breath-count">
+          {String(Math.floor(left / 60)).padStart(2, '0')}:{String(left % 60).padStart(2, '0')}
+        </p>
       </div>
-      <button type="button" className="btn ghost" onClick={onDone}>
+      <p className="breath-text" aria-live="polite">
+        {finished ? '乗り切りました' : inhale ? 'ゆっくり吸って' : 'ゆっくり吐いて'}
+      </p>
+      <button type="button" className="btn quiet" onClick={onDone}>
         {finished ? '閉じる' : 'タイマーを閉じる'}
       </button>
     </div>

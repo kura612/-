@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { Craving, TriggerId } from '../types';
 import { TRIGGERS, copingTip } from '../lib/cravings';
+import Icon from './icons';
 import UrgeTimer from './UrgeTimer';
 
 type Props = { onAdd: (craving: Omit<Craving, 'id'>) => void };
@@ -43,20 +44,20 @@ export default function CravingLogger({ onAdd }: Props) {
 
   if (!open) {
     return (
-      <section className="card logger-closed">
-        <div>
-          <h2>吸いたくなったら</h2>
-          <p className="muted small">
-            その瞬間に記録すると、あとで自分のパターンが見えてきます。
+      <section className="card prompt">
+        <div className="prompt-text">
+          <p className="prompt-title">吸いたくなったら</p>
+          <p className="prompt-sub">
+            {saved === null
+              ? 'その瞬間に記録すると、自分のパターンが見えてきます。'
+              : saved
+                ? '記録しました。よく耐えました。'
+                : '記録しました。次に活かしましょう。'}
           </p>
-          {saved !== null && (
-            <p className={`flash ${saved ? 'good' : 'neutral'}`}>
-              {saved ? '記録しました。よく耐えました 👏' : '記録しました。次に活かしましょう。'}
-            </p>
-          )}
         </div>
-        <button type="button" className="btn primary big" onClick={() => setOpen(true)}>
-          吸いたい気持ちを記録
+        <button type="button" className="btn solid" onClick={() => setOpen(true)}>
+          <Icon name="plus" size={16} />
+          記録する
         </button>
       </section>
     );
@@ -64,25 +65,35 @@ export default function CravingLogger({ onAdd }: Props) {
 
   return (
     <section className="card logger">
-      <h2>いまの「吸いたい」を記録</h2>
+      <div className="logger-head">
+        <h2 className="section-title">いまの「吸いたい」</h2>
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label="閉じる"
+          onClick={() => setOpen(false)}
+        >
+          <Icon name="close" size={16} />
+        </button>
+      </div>
 
-      <p className="field-label">強さ</p>
-      <div className="chips">
+      <p className="eyebrow">強さ</p>
+      <div className="segmented" role="group" aria-label="欲求の強さ">
         {INTENSITIES.map((i) => (
           <button
             key={i.value}
             type="button"
-            className={`chip${intensity === i.value ? ' active' : ''}`}
+            className={`segment${intensity === i.value ? ' active' : ''}`}
             aria-pressed={intensity === i.value}
             onClick={() => setIntensity(i.value)}
           >
-            <span className="chip-num">{i.value}</span>
-            {i.label}
+            <span className="segment-num">{i.value}</span>
+            <span className="segment-label">{i.label}</span>
           </button>
         ))}
       </div>
 
-      <p className="field-label">きっかけ</p>
+      <p className="eyebrow">きっかけ</p>
       <div className="chips">
         {TRIGGERS.map((t) => (
           <button
@@ -92,13 +103,14 @@ export default function CravingLogger({ onAdd }: Props) {
             aria-pressed={trigger === t.id}
             onClick={() => setTrigger(t.id)}
           >
-            <span aria-hidden="true">{t.icon}</span> {t.label}
+            <Icon name={t.icon} size={15} />
+            {t.label}
           </button>
         ))}
       </div>
 
-      <label className="note">
-        <span className="field-label">メモ（任意）</span>
+      <label className="field">
+        <span className="eyebrow">メモ（任意）</span>
         <input
           type="text"
           value={note}
@@ -108,24 +120,24 @@ export default function CravingLogger({ onAdd }: Props) {
         />
       </label>
 
-      <p className="tip">💡 {tip}</p>
+      <p className="tip">
+        <Icon name="bulb" size={15} />
+        <span>{tip}</span>
+      </p>
 
       {timer ? (
         <UrgeTimer onDone={() => setTimer(false)} />
       ) : (
-        <button type="button" className="btn ghost" onClick={() => setTimer(true)}>
-          3分やり過ごすタイマーを使う
+        <button type="button" className="btn quiet wide" onClick={() => setTimer(true)}>
+          3分やり過ごすタイマー
         </button>
       )}
 
       <div className="actions">
-        <button type="button" className="btn ghost" onClick={() => setOpen(false)}>
-          閉じる
-        </button>
-        <button type="button" className="btn subtle" onClick={() => save(false)}>
+        <button type="button" className="btn quiet" onClick={() => save(false)}>
           吸ってしまった
         </button>
-        <button type="button" className="btn primary" onClick={() => save(true)}>
+        <button type="button" className="btn solid" onClick={() => save(true)}>
           吸わずに乗り切った
         </button>
       </div>

@@ -1,0 +1,17 @@
+{
+  "name": "Smokefree — 禁煙トラッカー",
+  "short_name": "Smokefree",
+  "description": "禁煙の経過時間・体の回復・節約金額を可視化し、吸いたい欲求を記録して乗り切るアプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0c0e",
+  "theme_color": "#0b0c0e",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

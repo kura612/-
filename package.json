@@ -6,7 +6,7 @@
   "description": "モダンな禁煙トラッカー — 経過時間・健康回復マイルストーン・節約金額・クレービング記録",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/build-sw.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

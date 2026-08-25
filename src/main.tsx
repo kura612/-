@@ -11,3 +11,12 @@ createRoot(container).render(
     <App />
   </React.StrictMode>,
 );
+
+// オフラインでも開けるようにする。開発中は登録しない。
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {
+      // Service Worker が使えない環境でも、アプリ自体は問題なく動く
+    });
+  });
+}

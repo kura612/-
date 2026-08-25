@@ -11,7 +11,7 @@
 // ============================================================
 const CONFIG = {
   quitAt: '2026-08-01T09:00', // 禁煙を始めた日時 (YYYY-MM-DDTHH:mm、端末のローカル時刻)
-  cigarettesPerDay: 20, // 禁煙前に1日あたり吸っていた本数
+  cigarettesPerDay: 15, // 禁煙前に1日あたり吸っていた本数
   cigarettesPerPack: 20, // 1箱あたりの本数
   pricePerPack: 600, // 1箱あたりの価格（円）
 };
